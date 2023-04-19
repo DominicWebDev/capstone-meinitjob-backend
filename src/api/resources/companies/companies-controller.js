@@ -10,6 +10,22 @@ const getAllCompanies = (request, response) =>
       });
     });
 
+const getCompanySkillsByCompanyId = (request, response) => {
+  const { id } = request.params;
+
+  CompaniesService.findCompanySkillsByCompanyId(id)
+    .then((skills) => {
+      console.log(skills, "ControllerSKillsOutPut");
+      response.status(200).json({ skills });
+    })
+    .catch((error) => {
+      console.log("Fehler beim Erhalten von allen Unternehmen Skills. ", error);
+      return response.status(500).json({
+        message: "Fehler beim Erhalten von allen Unternehmen Skills.",
+      });
+    });
+};
+
 const getCompanyById = (request, response) => {
   const { id } = request.params;
 
@@ -39,4 +55,5 @@ const getCompanyById = (request, response) => {
 module.exports = {
   getAllCompanies,
   getCompanyById,
+  getCompanySkillsByCompanyId,
 };
