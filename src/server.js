@@ -36,5 +36,12 @@ server.get("/", function rootHandler(request, response) {
     message: `Welcome to the ${process.env.DEPLOYMENT} environment API of meinitjob!`,
   });
 });
+const companiesRouter = require("./api/resources/companies/companies-router");
+const skillsRouter = require("./api/resources/skills/skills-router");
+const usersRouter = require("./api/resources/users/users-router");
+
+server.use("/v1/users", usersRouter);
+server.use("/v1/companies", companiesRouter);
+server.use("/v1/skills", skillsRouter);
 
 module.exports = server;
