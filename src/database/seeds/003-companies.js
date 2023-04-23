@@ -74,7 +74,7 @@ exports.seed = function (knex) {
           remote: true,
           number_of_employees: 30,
           revenue: 50000000,
-          sector: "Künstliche Intelligenz",
+          sector: "Artificial Intelligence",
           established: 2012,
           logo: "6-swift-technologien-512x512.png",
           homepage: "https://swift-technologien.com",

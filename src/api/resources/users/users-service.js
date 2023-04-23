@@ -61,6 +61,9 @@ const addUserSkill = (userSkill) => {
         .insert(userSkill, "id")
         .then((newUserSkill) => findUserSkillbyId(newUserSkill[0].id));
     }
+    return db("users_skills")
+      .insert(userSkill, "id")
+      .then((newUserSkill) => findUserSkillbyId(newUserSkill[0].id));
   });
 };
 

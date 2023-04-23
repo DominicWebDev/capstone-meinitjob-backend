@@ -51,7 +51,7 @@ const updateUser = (request, response) => {
     pref_sector,
     description,
   } = request.body);
-
+  console.log(request.body, "KannIchGucken");
   if (
     request.body.id &&
     (first_name ||

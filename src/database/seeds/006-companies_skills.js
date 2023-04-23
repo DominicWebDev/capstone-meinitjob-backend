@@ -7,6 +7,14 @@ exports.seed = function (knex) {
           fk_skill_id: 1,
           fk_company_id: 1,
         },
+        {
+          fk_skill_id: 4,
+          fk_company_id: 7,
+        },
+        {
+          fk_skill_id: 7,
+          fk_company_id: 4,
+        },
       ]);
     });
 };
