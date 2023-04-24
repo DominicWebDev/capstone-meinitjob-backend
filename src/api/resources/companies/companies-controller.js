@@ -26,13 +26,23 @@ const getCompanySkillsByCompanyId = (request, response) => {
     });
 };
 
+const getAllCompanySkills = (request, response) =>
+  CompaniesService.findAllCompanySkills()
+    .then((companySkills) => response.status(200).json({ companySkills }))
+    .catch((error) => {
+      console.log("Fehler beim Erhalten von aller Unternehmenskills. ", error);
+      return response.status(500).json({
+        message: "Fehler beim Erhalten von aller Unternehmenskills.",
+      });
+    });
+
 const getCompanyById = (request, response) => {
   const { id } = request.params;
 
   if (id) {
-    CompaniesService.findById(id)
+    return CompaniesService.findById(id)
       .then((company) => {
-        company
+        return company
           ? response.status(200).json({ company })
           : response
               .status(404)
@@ -56,4 +66,5 @@ module.exports = {
   getAllCompanies,
   getCompanyById,
   getCompanySkillsByCompanyId,
+  getAllCompanySkills,
 };

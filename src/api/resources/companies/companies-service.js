@@ -35,8 +35,11 @@ const findCompanySkillsByCompanyId = (id) => {
     });
 };
 
+const findAllCompanySkills = () => db("companies_skills");
+
 module.exports = {
   find,
   findById,
   findCompanySkillsByCompanyId,
+  findAllCompanySkills,
 };
