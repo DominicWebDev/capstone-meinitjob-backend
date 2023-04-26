@@ -128,7 +128,7 @@ const getUserSkillsByUserId = (request, response) => {
     });
 };
 
-const addUserSkillsByUserId = (request, response) => {
+const addUserSkillByUserId = (request, response) => {
   const userSkillDTO = ({ fk_user_id, fk_skill_id } = request.body);
 
   if (fk_user_id && fk_skill_id) {
@@ -152,6 +152,41 @@ const addUserSkillsByUserId = (request, response) => {
     return response.status(400).json({
       message:
         "Fehler beim Hinzufügen von diesem Nutzer Skill, da Angaben fehlen.",
+    });
+  }
+};
+
+const updateUserSkill = (request, response) => {
+  console.log("updateUserSkill request.body.id", request.body.id);
+  console.log("updateUserSkill request.body.name", request.body.name);
+  console.log("updateUserSkill request.body.level", request.body.level);
+
+  if (request.body.id && request.body.name && request.body.level) {
+    UsersService.updateUserSkill(
+      request.body.id,
+      request.body.name,
+      request.body.level
+    )
+      .then((successFlag) =>
+        successFlag
+          ? response
+              .status(200)
+              .json({ message: "Der Nutzerskill wurde aktualisiert." })
+          : response.status(500).json({
+              message:
+                "Fehler bei der Aktualisierung des Nutzerskills, da Fehler in der Datenbank auftraten.",
+            })
+      )
+      .catch((error) => {
+        console.log("Fehler bei der Aktualisierung des Nutzerskills. ", error);
+        return response.status(500).json({
+          message: "Fehler bei der Aktualisierung des Nutzerskills.",
+        });
+      });
+  } else {
+    return response.status(400).json({
+      message:
+        "Fehler bei der Aktualisierung des Nutzerskills, da Angaben fehlen.",
     });
   }
 };
@@ -182,12 +217,127 @@ const deleteUserSkill = (request, response) => {
   }
 };
 
+const getMatchesByUserId = (request, response) => {
+  const { user_id } = request.params;
+
+  UsersService.findMatchesByUserId(user_id)
+    .then((matches) => response.status(200).json({ matches }))
+    .catch((error) => {
+      console.log(
+        "Fehler beim Erhalten von aller Matches des Nutzers. ",
+        error
+      );
+      return response.status(500).json({
+        message: "Fehler beim Erhalten von aller Matches des Nutzers.",
+      });
+    });
+};
+
+const addMatch = (request, response) => {
+  const matchDTO = ({ fk_user_id, fk_company_id } = request.body);
+
+  if (fk_user_id && fk_company_id) {
+    UsersService.addMatch(matchDTO)
+      .then(
+        ({
+          id,
+          fk_user_id,
+          fk_company_id,
+          match_status,
+          created_at,
+          updated_at,
+        }) =>
+          response.status(201).json({
+            id,
+            fk_user_id,
+            fk_company_id,
+            match_status,
+            created_at,
+            updated_at,
+          })
+      )
+      .catch((error) => {
+        console.log("Fehler beim Hinzufügen von diesem Match. ", error);
+        return response.status(500).json({
+          message: "Fehler beim Hinzufügen von diesem Match.",
+        });
+      });
+  } else {
+    return response.status(400).json({
+      message: "Fehler beim Hinzufügen von diesem Match, da Angaben fehlen.",
+    });
+  }
+};
+
+const updateMatch = (request, response) => {
+  const updateMatchDTO = ({ match_status } = request.body);
+  console.log(request.body, "KannIchGucken");
+
+  if (
+    request.body.id &&
+    (match_status === "accepted" || match_status === "ignored")
+  ) {
+    UsersService.updateMatch(request.body.id, updateMatchDTO)
+      .then((successFlag) =>
+        successFlag // evtl > 0
+          ? response
+              .status(200)
+              .json({ message: "Das Match wurde aktualisiert." })
+          : response.status(500).json({
+              message:
+                "Fehler bei der Aktualisierung des Matches, da Fehler in der Datenbank auftraten.",
+            })
+      )
+      .catch((error) => {
+        console.log("Fehler bei der Aktualisierung des Matches. ", error);
+        return response.status(500).json({
+          message: "Fehler bei der Aktualisierung des Matches.",
+        });
+      });
+  } else {
+    return response.status(400).json({
+      message: "Fehler bei der Aktualisierung des Matches, da Angaben fehlen.",
+    });
+  }
+};
+
+const deleteMatch = (request, response) => {
+  const { id } = request.params;
+
+  if (id) {
+    UsersService.deleteMatch(id)
+      .then((numberOfDeletedMatches) =>
+        numberOfDeletedMatches
+          ? response.status(200).json({ message: "Das Match wurde gelöscht." })
+          : response.status(500).json({
+              message:
+                "Fehler beim Löschen des Matches, da Fehler in der Datenbank auftraten.",
+            })
+      )
+      .catch((error) => {
+        console.log("Fehler beim Löschen des Matches. ", error);
+        return response.status(500).json({
+          message: "Fehler beim Löschen des Matches.",
+        });
+      });
+  } else {
+    return response.status(400).json({
+      message: "Fehler beim Löschen des Matches, da Angaben fehlen.",
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   addUser,
   updateUser,
   getUserById,
   getUserSkillsByUserId,
-  addUserSkillsByUserId,
+  addUserSkillByUserId,
+  updateUserSkill,
   deleteUserSkill,
+  getMatchesByUserId,
+  addMatch,
+  updateMatch,
+  deleteMatch,
 };

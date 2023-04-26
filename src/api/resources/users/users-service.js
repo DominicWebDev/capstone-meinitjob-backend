@@ -12,7 +12,7 @@ const findById = (id) =>
 const findUserSkillsByUserId = (id) => {
   return db("users_skills as us")
     .join("users as u", "u.id", "us.fk_user_id")
-    .select("us.fk_skill_id")
+    .select("us.fk_skill_id", "us.id")
     .where("u.id", id)
     .then((userSkills) => {
       console.log(userSkills, "DieserOutPut");
@@ -67,11 +67,50 @@ const addUserSkill = (userSkill) => {
   });
 };
 
+const findSkillByNameAndId = (name, level) =>
+  db("skills")
+    .where("name", name)
+    .andWhere("level", level)
+    .first()
+    .then((skill) => skill ?? null);
+
+const updateUserSkill = (id, name, level) => {
+  return findSkillByNameAndId(name, level).then((foundSkill) => {
+    console.log("I HAVE FOUND THE RIGHT SKILL", foundSkill);
+    return db("users_skills")
+      .where({ id })
+      .update({ fk_skill_id: foundSkill.id });
+  });
+};
+
 const deleteUserSkill = ({ user_id, skill_id }) =>
   db("users_skills")
     .where("fk_user_id", user_id)
     .andWhere("fk_skill_id", skill_id)
     .del();
+
+const findMatchById = (id) =>
+  db("matches")
+    .where({ id })
+    .first()
+    .then((match) => match ?? null);
+
+const findMatchesByUserId = (fk_user_id) =>
+  db("matches")
+    .where("fk_user_id", fk_user_id)
+    .then((matches) =>
+      matches.length ? matches : null
+    ); /* TODO: IS matches AN ARRAY AND ALWAYS TRUTHY? */
+
+const addMatch = (match) =>
+  db("matches")
+    .insert(match, "id")
+    .then((newMatch) => findMatchById(newMatch[0].id));
+
+const updateMatch = (id, changes) =>
+  db("matches").where({ id }).update(changes);
+
+const deleteMatch = (id) => db("matches").where("id", id).del();
 
 module.exports = {
   find,
@@ -80,5 +119,10 @@ module.exports = {
   update,
   findUserSkillsByUserId,
   addUserSkill,
+  updateUserSkill,
   deleteUserSkill,
+  findMatchesByUserId,
+  addMatch,
+  updateMatch,
+  deleteMatch,
 };
