@@ -11,7 +11,7 @@ const getAllUsers = (request, response) =>
     });
 
 const addUser = (request, response) => {
-  const userDTO = ({ first_name, last_name, email } = request.body);
+  const userDTO = ({ first_name, last_name, email, image } = request.body);
 
   if (first_name && last_name && email) {
     /* userDTO.user_photo = `https://source.boringavatars.com/beam/300/${_user_id}${_user_id}${_user_id}?colors=2f70e9,e76f51,ffc638,f4a261,e97c2f`; */
@@ -92,6 +92,30 @@ const getUserById = (request, response) => {
 
   if (id) {
     UsersService.findById(id)
+      .then((user) => {
+        user
+          ? response.status(200).json({ user })
+          : response
+              .status(404)
+              .json({ message: "Dieser Nutzer wurde nicht gefunden." });
+      })
+      .catch((error) => {
+        console.log("Fehler beim Erhalten von diesem Nutzer. ", error);
+        return response.status(500).json({
+          message: "Fehler beim Erhalten von diesem Nutzer.",
+        });
+      });
+  } else {
+    return response.status(400).json({
+      message: "Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.",
+    });
+  }
+};
+const getUserByEmail = (request, response) => {
+  const { email } = request.params;
+  console.log(email, "Hier ist die email");
+  if (email) {
+    UsersService.findByEmail(email)
       .then((user) => {
         user
           ? response.status(200).json({ user })
@@ -340,4 +364,5 @@ module.exports = {
   addMatch,
   updateMatch,
   deleteMatch,
+  getUserByEmail,
 };

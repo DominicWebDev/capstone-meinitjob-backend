@@ -9,6 +9,12 @@ const findById = (id) =>
     .first()
     .then((user) => user ?? null);
 
+const findByEmail = (email) =>
+  db("users")
+    .where({ email })
+    .first()
+    .then((user) => user ?? null);
+
 const findUserSkillsByUserId = (id) => {
   return db("users_skills as us")
     .join("users as u", "u.id", "us.fk_user_id")
@@ -125,4 +131,5 @@ module.exports = {
   addMatch,
   updateMatch,
   deleteMatch,
+  findByEmail,
 };
